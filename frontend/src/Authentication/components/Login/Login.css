@@ -1,0 +1,8 @@
+.captcha-box {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 18px;
+    letter-spacing: 3px;
+    user-select: none;
+}
