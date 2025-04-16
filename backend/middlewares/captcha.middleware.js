@@ -10,14 +10,18 @@ exports.verifyCaptcha = async (req, res, next) => {
 
     try {
         const response = await axios.post(
-            `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${token}`
-        );
-
-        if (!response.data.success) {
-            return res
-                .status(403)
-                .json({ message: "CAPTCHA verification failed" });
-        }
+            "https://www.google.com/recaptcha/api/siteverify",
+            new URLSearchParams({
+              secret: RECAPTCHA_SECRET_KEY,
+              response: token,
+            }),
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            }
+          );
+          
 
         next();
     } catch (err) {

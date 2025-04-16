@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
         }
 
         if (user.password === password) {
-            return res.json(200).json({
+            return res.status(200).json({
                 message: "Login successful",
                 user: {
                     name: user.name,
@@ -47,8 +47,9 @@ exports.login = async (req, res) => {
         } else {
             return res.status(401).json({ message: "Invalid password" });
         }
-    } catch {
+    } catch (error) {
         console.log(" backend login error :", error);
-        return res.json(500).json({ message: "server error" });
+        return res.status(500).json({ message: "Server error" });
     }
 };
+
