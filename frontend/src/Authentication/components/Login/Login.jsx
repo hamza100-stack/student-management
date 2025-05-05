@@ -1,14 +1,14 @@
-import React, { useState, useEffect ,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import "./Login.css"; // Optional for custom styles
 import axios from "axios";
+import { saveToken } from "../../../services/authService";
+
 
 const Login = () => {
-
     const recaptchaRef = useRef(null);
-
 
     const navigate = useNavigate();
 
@@ -48,15 +48,20 @@ const Login = () => {
         }
 
         try {
-            const res = await axios.post("http://localhost:5000/api/auth/login", {
-                username,
-                password,
-                token: captchaToken,
-            });
+            const res = await axios.post(
+                "http://localhost:5000/api/auth/login",
+                {
+                    username,
+                    password,
+                    token: captchaToken,
+                }
+            );
 
-            console.log(res);
+            // console.log(res);
             if (res.data.message === "Login successful") {
                 alert("✅ Login successful!");
+                // sessionStorage.setItem("accessToken", res.data.token);
+                saveToken(res.data.token);
                 navigate("/dashboard");
             } else {
                 setError(res.data.message);
@@ -106,11 +111,10 @@ const Login = () => {
                         />
                     </div>
 
-
                     <div className="mb-3">
                         <ReCAPTCHA
                             ref={recaptchaRef}
-                            sitekey="6LdmIBkrAAAAADOdAruK4PzwKqqVFQ4wjM53qdDZ" 
+                            sitekey="6LdmIBkrAAAAADOdAruK4PzwKqqVFQ4wjM53qdDZ"
                             onChange={handleCaptchaChange}
                         />
                     </div>
