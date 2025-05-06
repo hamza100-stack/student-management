@@ -6,10 +6,6 @@ import "./Login.css"; // Optional for custom styles
 import axios from "axios";
 import { saveToken } from "../../../services/authService";
 
-
-
-///////////////////////////////////////////////////////////asdfjlkasdklfjasdkl;fjsad;lkfjasd;//////////////
-
 const Login = () => {
     const recaptchaRef = useRef(null);
 
