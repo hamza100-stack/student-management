@@ -1,0 +1,8 @@
+[2025-05-06 19:11:50] ERROR: 🔥 This is a test error log
+
+[2025-05-06 19:19:33] ERROR: Login Error error is not defined
+ReferenceError: error is not defined
+    at exports.login (C:\Personal\Student\student-management\backend\controllers\auth.controller.js:80:41)
+
+[2025-05-06 19:21:34] ERROR: Login Error
+

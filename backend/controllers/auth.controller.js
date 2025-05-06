@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const logger = require("../utils/logger")
+const isDbConnected = require("../utils/dbStatus")
 
 const { getDB } = require("../config/db");
 const JWT_SECRET = process.env.JWT_SECRET; // 🔐 Replace with an env variable in production
@@ -32,12 +34,19 @@ exports.register = async (req, res) => {
         });
     } catch (err) {
         console.error("Registration error:", err);
+        logger.error('Login Error', err); // 👈 Log full error to file
         res.status(500).json({ message: "Server error", err });
     }
 };
 
 exports.login = async (req, res) => {
     const { username, password } = req.body;
+
+    if (!(await isDbConnected())) {
+        logger.error('Login failed: Database is disconnected');
+        
+        return res.status(500).json({ message: 'Database not connected, please try again.' });
+      }
 
     try {
         const db = getDB();
@@ -68,10 +77,13 @@ exports.login = async (req, res) => {
                 },
             });
         } else {
+            logger.error('Login Error', 'Invalid password'); // 👈 Log full error to file
             return res.status(401).json({ message: "Invalid password" });
+
         }
     } catch (error) {
         console.log(" backend login error :", error);
+        logger.error('Login Error', error); // 👈 Log full error to file
         return res.status(500).json({ message: "Server error" });
     }
 };
