@@ -6,7 +6,6 @@ import "./Login.css"; // Optional for custom styles
 import axios from "axios";
 import { saveToken } from "../../../services/authService";
 
-
 const Login = () => {
     const recaptchaRef = useRef(null);
 
@@ -68,7 +67,7 @@ const Login = () => {
             }
         } catch (err) {
             console.error(err);
-            setError("❌ Login failed. Please try again frontend.");
+            setError("❌ Login failed. Please try again -- frontend.");
         } finally {
             // Optional: reset captcha after attempt
             setCaptchaVerified(false);
@@ -81,6 +80,9 @@ const Login = () => {
 
     const handleForgotPassword = () => {
         navigate("/auth/forgot-pass");
+    };
+    const handleRegister = () => {
+        navigate("/auth/register");
     };
 
     return (
@@ -127,6 +129,18 @@ const Login = () => {
                     >
                         Login
                     </button>
+                    <br></br>
+
+                    <button
+                        type="button"
+                        className="btn btn-outline-secondary w-100"
+                        onClick={handleRegister}
+                    >
+                        Sign Up
+                    </button>
+                    <br></br>
+                    <br></br>
+
                     <button
                         type="button"
                         className="btn btn-outline-secondary w-100"

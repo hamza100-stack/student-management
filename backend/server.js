@@ -1,7 +1,9 @@
+// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
 const { connectDB } = require("./config/db");
 const authRoutes = require("./routes/auth.routes");
 
@@ -12,14 +14,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 connectDB()
-    .then(() => {
-        console.log("✅ DB connected. Starting server...");
-        app.use("/api/auth", authRoutes);
+  .then(() => {
+    console.log("✅ DB connected. Starting server...");
 
-        app.listen(PORT, () =>
-            console.log(`✅ Server running at http://localhost:${PORT}`)
-        );
-    })
-    .catch((err) => {
-        console.error("❌ Failed to connect to DB. Server not started.", err);
-    });
+    app.use("/api/auth", authRoutes);
+
+    app.listen(PORT, () =>
+      console.log(`✅ Server running at http://localhost:${PORT}`)
+    );
+  })
+  .catch((err) => {
+    console.error("❌ Max retries reached. Could not connect to MongoDB.");
+    console.error("❌ Failed to connect to DB. Server not started.");
+    console.error(err.message);
+  });
