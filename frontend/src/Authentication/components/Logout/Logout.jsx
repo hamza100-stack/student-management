@@ -1,17 +1,22 @@
 // src/Authentication/components/Logout.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { clearToken } from "../../../services/authService";
+import { clearTokenLocalStoage } from "../../../services/authService";
+import { useDispatch } from "react-redux";
+import { clearToken } from "../../../features/auth/authSlice";
 
 const Logout = () => {
-  const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-  const logout = () => {
-    clearToken();
-    navigate("/auth/login");
-  };
+    const navigate = useNavigate();
 
-  return <button onClick={logout}>Logout</button>;
+    const logout = () => {
+      clearTokenLocalStoage();
+        dispatch(clearToken());
+        navigate("/auth/login");
+    };
+
+    return <button onClick={logout}>Logout</button>;
 };
 
 export default Logout;

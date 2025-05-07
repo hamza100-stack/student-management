@@ -23,7 +23,7 @@ export const saveToken = (token) => {
   }, timeout);
 };
 
-export const clearToken = () => {
+export const clearTokenLocalStoage = () => {
   localStorage.removeItem("accessToken");
   if (logoutTimer) clearTimeout(logoutTimer);
 };

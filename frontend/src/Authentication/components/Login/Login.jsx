@@ -5,6 +5,8 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "./Login.css"; // Optional for custom styles
 import axios from "axios";
 import { saveToken } from "../../../services/authService";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "../../../features/auth/authSlice";
 
 const Login = () => {
     const recaptchaRef = useRef(null);
@@ -19,12 +21,19 @@ const Login = () => {
     const [captchaVerified, setCaptchaVerified] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
 
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
     useEffect(() => {
         // setCaptcha(generateCaptcha());
-    }, []);
+
+        if (isAuthenticated) {
+            navigate("/dashboard");
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleCaptchaChange = (value) => {
-        console.log("Captcha value (token):", value);
+        // console.log("Captcha value (token):", value);
         if (value) {
             setCaptchaToken(value);
             setCaptchaVerified(true);
@@ -59,15 +68,14 @@ const Login = () => {
             // console.log(res);
             if (res.data.message === "Login successful") {
                 alert("✅ Login successful!");
-                // sessionStorage.setItem("accessToken", res.data.token);
                 saveToken(res.data.token);
-                navigate("/dashboard");
+                dispatch(setToken(res.data.token)); // ✅ store in Redux
             } else {
                 setError(res.data.message);
             }
         } catch (err) {
             console.error(err);
-            setError("❌ Login failed. Please try again -- frontend.");
+            setError("❌ Login failed. at -- frontend. Pls try again later");
         } finally {
             // Optional: reset captcha after attempt
             setCaptchaVerified(false);
