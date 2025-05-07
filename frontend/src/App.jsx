@@ -1,12 +1,25 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    useNavigate,
+} from "react-router-dom";
 import AuthenticationRoutes from "./Authentication/AuthenticationRoutes";
 import DashboardRoutes from "./Dashboard/Dashboard";
-import { setLogoutCallback, saveToken, getToken, clearToken } from "./services/authService";
+import {
+    setLogoutCallback,
+    saveToken,
+    getToken,
+    clearTokenLocalStoage,
+} from "./services/authService";
+import { setToken } from "./features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 // 👇 Wrapper to use hooks like useNavigate
 const AppWithAuth = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         // Setup logout callback when token expires
@@ -20,6 +33,7 @@ const AppWithAuth = () => {
         const token = getToken();
         if (token) {
             saveToken(token);
+            dispatch(setToken(token));
         }
     }, [navigate]);
 
@@ -41,14 +55,10 @@ const App = () => {
 
 export default App;
 
-
-
-
 // import React from "react";
 // import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import AuthenticationRoutes from "./Authentication/AuthenticationRoutes";
 // import DashboardRoutes from "./Dashboard/Dashboard";
-
 
 // const App = () => {
 //     return (
