@@ -28,7 +28,7 @@ const Login = () => {
         // setCaptcha(generateCaptcha());
 
         if (isAuthenticated) {
-            navigate("/dashboard");
+            navigate("/dashboard/admin");
         }
     }, [isAuthenticated, navigate]);
 
@@ -65,7 +65,6 @@ const Login = () => {
                 }
             );
 
-            // console.log(res);
             if (res.data.message === "Login successful") {
                 alert("✅ Login successful!");
                 saveToken(res.data.token);

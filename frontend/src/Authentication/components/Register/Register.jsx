@@ -10,6 +10,7 @@ const Register = () => {
         name: "",
         email: "",
         phone: "",
+        role: "",
         password: "",
     });
 
@@ -19,6 +20,7 @@ const Register = () => {
         formData.name.trim() !== "" &&
         formData.email.trim() !== "" &&
         formData.phone.trim() !== "" &&
+        formData.role.trim() !== "" &&
         formData.password.trim() !== "" &&
         Object.values(errors).every((error) => error === "");
 
@@ -50,6 +52,11 @@ const Register = () => {
                 else if (!/^\d{10}$/.test(value))
                     errorMsg = "Phone must be 10 digits";
                 break;
+            case "role":
+                if (!value.trim()) errorMsg = "Role is required";
+                // else if (!/^\d{10}$/.test(value))
+                //     errorMsg = "Phone must be 10 digits";
+                break;
             case "password":
                 if (!value.trim()) errorMsg = "Password is required";
                 else if (value.length < 6)
@@ -58,7 +65,6 @@ const Register = () => {
             default:
                 break;
         }
-        console.log(errorMsg, "hitesh");
 
         // Update error for the field
         setErrors((prev) => ({
@@ -75,7 +81,6 @@ const Register = () => {
             Object.values(errors).every((msg) => msg === "") &&
             Object.values(formData).every((val) => val.trim() !== "")
         ) {
-            console.log("chicha");
             try {
                 const response = await axios.post(
                     "http://localhost:5000/api/auth/register",
@@ -89,6 +94,7 @@ const Register = () => {
                     name: "",
                     email: "",
                     phone: "",
+                    role: "",
                     password: "",
                 });
             } catch (error) {
@@ -100,7 +106,6 @@ const Register = () => {
                 );
             }
         }
-        console.log("chicha outside1");
     };
 
     const goToLogin = () => {
@@ -121,7 +126,6 @@ const Register = () => {
                     className="register-input"
                 />
                 {errors.name && <span className="error">{errors.name}</span>}
-
                 <input
                     type="email"
                     name="email"
@@ -132,7 +136,6 @@ const Register = () => {
                     className="register-input"
                 />
                 {errors.email && <span className="error">{errors.email}</span>}
-
                 <input
                     type="tel"
                     name="phone"
@@ -143,7 +146,22 @@ const Register = () => {
                     className="register-input"
                 />
                 {errors.phone && <span className="error">{errors.phone}</span>}
-
+                <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                    className="register-input"
+                >
+                    <option value="">Select Role</option>{" "}
+                    {/* default placeholder */}
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Content Developer">Content Developer</option>
+                </select>
+                const rolesList = ["Content Developer", "Student", "Teacher",
+                "Admin", "Block"];
+                {errors.name && <span className="error">{errors.role}</span>}
                 <input
                     type="password"
                     name="password"
@@ -156,7 +174,6 @@ const Register = () => {
                 {errors.password && (
                     <span className="error">{errors.password}</span>
                 )}
-
                 <button
                     disabled={!isFormValid}
                     type="submit"

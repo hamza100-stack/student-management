@@ -6,7 +6,7 @@ import {
     useNavigate,
 } from "react-router-dom";
 import AuthenticationRoutes from "./Authentication/AuthenticationRoutes";
-import DashboardRoutes from "./Dashboard/Dashboard";
+import DashboardRoutes from "./Dashboard/DashboardRoutes";
 import {
     setLogoutCallback,
     saveToken,
@@ -15,6 +15,10 @@ import {
 } from "./services/authService";
 import { setToken } from "./features/auth/authSlice";
 import { useDispatch } from "react-redux";
+import Navbar from "./Navbar";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // 👇 Wrapper to use hooks like useNavigate
 const AppWithAuth = () => {
@@ -24,7 +28,8 @@ const AppWithAuth = () => {
     useEffect(() => {
         // Setup logout callback when token expires
         setLogoutCallback(() => {
-            clearToken();
+            // clearToken();
+            clearTokenLocalStoage();
             alert("Session expired. Please login again.");
             navigate("/auth/login");
         });
@@ -47,29 +52,16 @@ const AppWithAuth = () => {
 
 const App = () => {
     return (
-        <Router>
-            <AppWithAuth />
-        </Router>
+        <>
+            <Router>
+                <Navbar />
+                <AppWithAuth />
+            </Router>
+
+            {/* ToastContainer should appear once globally */}
+            <ToastContainer position="top-right" autoClose={3000} />
+        </>
     );
 };
 
 export default App;
-
-// import React from "react";
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import AuthenticationRoutes from "./Authentication/AuthenticationRoutes";
-// import DashboardRoutes from "./Dashboard/Dashboard";
-
-// const App = () => {
-//     return (
-//         <Router>
-//             <Routes>
-//                 <Route path="/auth/*" element={<AuthenticationRoutes />} />
-//                 <Route path="/dashboard/*" element={<DashboardRoutes />} />
-//                 {/* You can add other routes here */}
-//             </Routes>
-//         </Router>
-//     );
-// };
-
-// export default App;
