@@ -7,6 +7,8 @@ import styles from "../adminDashboard/AdminDashboard.module.css";
 import BootstrapModal from "../../../shared/BootstrapModal";
 import EditUser from "./EditUser";
 import { toast } from "react-toastify";
+import axiosInterceptor from "../../../services/axiosInterceptor";
+import { deleteUser, fetchUserList } from "../../../services/userService";
 
 const UsersList = () => {
     const [showModal, setShowModal] = useState(false);
@@ -15,6 +17,7 @@ const UsersList = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null); // to store the selected user
     const [selectUserToDelete, setSelectUserToDelete] = useState(null);
+    const [filteredUsers, setFilteredUsers] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -33,27 +36,16 @@ const UsersList = () => {
     const closeModal = () => setShowModal(false);
     const closeModalDelete = () => setShowModalDelete(false);
 
-    // useEffect(() => {
-    //     const fetchUsers = async () => {
-    //         try {
-    //             const res = await axios.get(
-    //                 "http://localhost:5000/api/users/userlist"
-    //             );
-    //             setUsers(res.data);
-    //         } catch (err) {
-    //             console.error("Error fetching users", err);
-    //         }
-    //     };
-    //     fetchUsers();
-    // }, [showModal, showModalDelete]);
-
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await axios.get(
-                    "http://localhost:5000/api/users/userlist"
-                );
-                setUsers(res.data);
+                // const res = await axiosInterceptor.get("/users/userlist");
+                // setUsers(res.data);
+                const res = await fetchUserList();
+                if (res.status == 200) {
+                    setUsers(res.data);
+                    setFilteredUsers(res.data);
+                }
             } catch (err) {
                 console.error("Error fetching users", err);
             }
@@ -67,17 +59,39 @@ const UsersList = () => {
 
     const handleDeleteConfirm = async () => {
         try {
-            const res = await axios.delete(
-                `http://localhost:5000/api/auth/user/${selectUserToDelete}`
-            );
-            if (res.data.status == "success") {
-                setUsers(users.filter((u) => u._id !== selectUserToDelete));
+            // const res = await axios.delete(
+            //     `http://localhost:5000/api/auth/user/${selectUserToDelete}`
+            // );
+            const res = await deleteUser(selectUserToDelete);
+
+            if (res.status == "success") {
+                // setUsers(users.filter((u) => u._id !== selectUserToDelete));
                 setShowModalDelete(false);
                 toast.success("User Deleted successfully");
             }
         } catch (err) {
             console.error("Delete failed", err);
         }
+    };
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+
+        let filteredUsers1 = users.filter((user) => {
+            if (
+                user.name.toLowerCase().includes(value.toLowerCase()) ||
+                user.email.toLowerCase().includes(value.toLowerCase())
+            ) {
+                return user;
+            }
+        });
+
+        console.log(filteredUsers1);
+        // console.log(filteredUsers, "pooooo");
+        // if (filteredUsers.length > 0) {
+        setFilteredUsers(filteredUsers1);
+
+        // }
     };
 
     return (
@@ -143,7 +157,17 @@ const UsersList = () => {
                     transition: "margin-left 0.3s ease-in-out",
                 }}
             >
-                <h2 className="mb-4">All Users</h2>
+                {/* <h2 className="mb-4">All Users</h2> */}
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="mb-0">All Users</h2>
+                    <input
+                        type="text"
+                        placeholder="Search user..."
+                        className="form-control"
+                        style={{ maxWidth: "250px" }}
+                        onChange={handleSearchChange} // You can add your search handler here
+                    />
+                </div>
                 <div className="table-responsive">
                     <table className="table table-bordered table-striped">
                         <thead className="thead-dark">
@@ -153,18 +177,22 @@ const UsersList = () => {
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Role</th>
+
                                 <th style={{ minWidth: "150px" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {users.length > 0 ? (
-                                users.map((user, index) => (
+                            {filteredUsers.length > 0 ? (
+                                filteredUsers.map((user, index) => (
                                     <tr key={user._id}>
                                         <td>{index + 1}</td>
                                         <td>{user._id}</td>
                                         <td>{user.name}</td>
                                         <td>{user.email}</td>
                                         <td>{user.phone || "N/A"}</td>
+                                        <td>{user.role || "N/A"}</td>
+
                                         <td>
                                             <button
                                                 className="btn btn-sm btn-info mr-2"

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { forgotUser } from "../../../services/authService";
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -20,14 +21,16 @@ const ForgotPassword = () => {
 
         try {
             // Replace this with actual API call if you have one
-            const res = await axios.post("http://localhost:5000/api/forgot-password", {
-                email,
-            });
+            // const res = await axios.post("http://localhost:5000/api/forgot-password", {
+            //     email,
+            // });
 
-            if (res.data.success) {
+            const res = await forgotUser(email);
+
+            if (res.success) {
                 setMessage("✅ Password reset link sent to your email.");
             } else {
-                setError(res.data.message || "Something went wrong.");
+                setError(res.message || "Something went wrong.");
             }
         } catch (err) {
             console.error(err);
@@ -41,7 +44,10 @@ const ForgotPassword = () => {
 
     return (
         <div className="container d-flex justify-content-center align-items-center vh-100">
-            <div className="card p-4 shadow-lg" style={{ maxWidth: "400px", width: "100%" }}>
+            <div
+                className="card p-4 shadow-lg"
+                style={{ maxWidth: "400px", width: "100%" }}
+            >
                 <h3 className="text-center mb-4">Forgot Password</h3>
                 <form onSubmit={handleResetPassword}>
                     <div className="mb-3">
@@ -54,10 +60,15 @@ const ForgotPassword = () => {
                         />
                     </div>
 
-                    {message && <div className="alert alert-success">{message}</div>}
+                    {message && (
+                        <div className="alert alert-success">{message}</div>
+                    )}
                     {error && <div className="alert alert-danger">{error}</div>}
 
-                    <button type="submit" className="btn btn-primary w-100 mb-2">
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-100 mb-2"
+                    >
                         Reset Password
                     </button>
                     <button

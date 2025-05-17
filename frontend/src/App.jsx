@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { lazy, Suspense } from "react";
+
 import {
     BrowserRouter as Router,
     Routes,
@@ -6,7 +8,6 @@ import {
     useNavigate,
 } from "react-router-dom";
 import AuthenticationRoutes from "./Authentication/AuthenticationRoutes";
-import DashboardRoutes from "./Dashboard/DashboardRoutes";
 import {
     setLogoutCallback,
     saveToken,
@@ -19,11 +20,15 @@ import Navbar from "./Navbar";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Login from "./Authentication/components/Login/Login";
+import PageNotFound from "./shared/PageNotFound";
+import GlobalLoader from "./shared/GlobalLoader";
 
 // 👇 Wrapper to use hooks like useNavigate
 const AppWithAuth = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const DashboardRoutes = lazy(() => import("./Dashboard/DashboardRoutes"));
 
     useEffect(() => {
         // Setup logout callback when token expires
@@ -45,7 +50,23 @@ const AppWithAuth = () => {
     return (
         <Routes>
             <Route path="/auth/*" element={<AuthenticationRoutes />} />
-            <Route path="/dashboard/*" element={<DashboardRoutes />} />
+
+            <Route
+                path="/dashboard/*"
+                element={
+                    <Suspense
+                        fallback={
+                            <div className="text-center mt-5">
+                                Loading Dashboard...
+                            </div>
+                        }
+                    >
+                        <DashboardRoutes />
+                    </Suspense>
+                }
+            />
+            <Route path="" element={<Login />} />
+            <Route path="*" element={<PageNotFound />} />
         </Routes>
     );
 };
@@ -58,6 +79,7 @@ const App = () => {
                 <AppWithAuth />
             </Router>
 
+            <GlobalLoader /> {/* ⬅️ Always available */}
             {/* ToastContainer should appear once globally */}
             <ToastContainer position="top-right" autoClose={3000} />
         </>

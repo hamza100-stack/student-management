@@ -15,10 +15,17 @@ exports.getAllUsers = async (req, res) => {
             .find({}, { projection: { password: 0 } }) // Exclude passwords
             .toArray();
 
-        res.status(200).json(userList);
+        res.status(200).json({
+            status: 200,
+            message: "User list fetched successfully",
+            data: userList,
+        });
     } catch (err) {
         console.error("Error fetching users:", err);
         logger.error("Get All Users Error", err);
-        res.status(500).json({ message: "Failed to fetch users" });
+        res.status(500).json({
+            status: 500,
+            message: "Failed to fetch users",
+        });
     }
 };

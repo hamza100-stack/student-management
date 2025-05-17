@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { rolesMap } from "../../../utilities/roleList";
 import { rolesList } from "../../../utilities/roleList";
+import { editUser } from "../../../services/userService";
 
 const EditUser = ({ id, name, email, phone, role, onChange, handleClose }) => {
     const [formName, setFormName] = useState(name);
@@ -89,7 +90,7 @@ const EditUser = ({ id, name, email, phone, role, onChange, handleClose }) => {
         }
     };
     const handleSubmit = async (e) => {
-        const value = e.target.preventDefault;
+        e.preventDefault();
 
         if (formRole == undefined) {
             setError((prev) => ({
@@ -103,27 +104,20 @@ const EditUser = ({ id, name, email, phone, role, onChange, handleClose }) => {
             }));
         }
 
-        if (
-            error.name !== "" &&
-            error.phone !== "" &&
-            error.role !== undefined &&
-            error.role !== null &&
-            error.role != ""
-        ) {
-            return;
-        } else {
+        if (error.name == "" && error.phone == "" && error.role == "") {
             const user = {
                 name: formName,
                 phone: formPhone,
                 role: formRole,
             };
             try {
-                const res = await axios.put(
-                    `http://localhost:5000/api/auth/user/${id}`,
-                    user
-                );
+                // const res = await axios.put(
+                //     `http://localhost:5000/api/auth/user/${id}`,
+                //     user
+                // );
+                const res = await editUser(user, id);
 
-                if (res.data.status == "success") {
+                if (res.status == "success") {
                     toast.success("User updated successfully");
                     handleClose();
                 }
@@ -133,6 +127,8 @@ const EditUser = ({ id, name, email, phone, role, onChange, handleClose }) => {
                     return toast.error(data.message);
                 }
             }
+        } else {
+            return;
         }
     };
 

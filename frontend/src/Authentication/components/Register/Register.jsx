@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Register.css"; // 👈 Import CSS
+import { registerUser } from "../../../services/authService";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -54,8 +55,6 @@ const Register = () => {
                 break;
             case "role":
                 if (!value.trim()) errorMsg = "Role is required";
-                // else if (!/^\d{10}$/.test(value))
-                //     errorMsg = "Phone must be 10 digits";
                 break;
             case "password":
                 if (!value.trim()) errorMsg = "Password is required";
@@ -76,19 +75,20 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        console.log(Object.keys(errors));
+        // console.log(Object.keys(errors));
         if (
             Object.values(errors).every((msg) => msg === "") &&
             Object.values(formData).every((val) => val.trim() !== "")
         ) {
             try {
-                const response = await axios.post(
-                    "http://localhost:5000/api/auth/register",
-                    formData
-                );
+                // const response = await axios.post(
+                //     "http://localhost:5000/api/auth/register",
+                //     formData
+                // );
 
-                alert("✅ Registration successful!");
-                console.log(response.data);
+                const res = await registerUser(formData);
+
+                res.message && alert(res.message);
 
                 setFormData({
                     name: "",
@@ -155,12 +155,12 @@ const Register = () => {
                 >
                     <option value="">Select Role</option>{" "}
                     {/* default placeholder */}
-                    <option value="Student">Student</option>
-                    <option value="Teacher">Teacher</option>
-                    <option value="Content Developer">Content Developer</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="content_developer">Content Developer</option>
                 </select>
-                const rolesList = ["Content Developer", "Student", "Teacher",
-                "Admin", "Block"];
+                {/* const rolesList = ["Content Developer", "Student", "Teacher",
+                "Admin", "Block"]; */}
                 {errors.name && <span className="error">{errors.role}</span>}
                 <input
                     type="password"
