@@ -77,7 +77,7 @@ const UsersList = () => {
     const handleSearchChange = (e) => {
         const value = e.target.value;
 
-        let filteredUsers1 = users.filter((user) => {
+        let arrayOfFilteredData = users.filter((user) => {
             if (
                 user.name.toLowerCase().includes(value.toLowerCase()) ||
                 user.email.toLowerCase().includes(value.toLowerCase())
@@ -86,13 +86,12 @@ const UsersList = () => {
             }
         });
 
-        console.log(filteredUsers1);
-        // console.log(filteredUsers, "pooooo");
-        // if (filteredUsers.length > 0) {
-        setFilteredUsers(filteredUsers1);
-
-        // }
+        setFilteredUsers(arrayOfFilteredData);
     };
+
+    const handleClearSearch = ()=>{
+        setFilteredUsers([])
+    }
 
     return (
         <div className="container-fluid px-0">
@@ -158,7 +157,7 @@ const UsersList = () => {
                 }}
             >
                 {/* <h2 className="mb-4">All Users</h2> */}
-                <div className="d-flex justify-content-between align-items-center mb-4">
+                {/* <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2 className="mb-0">All Users</h2>
                     <input
                         type="text"
@@ -167,7 +166,35 @@ const UsersList = () => {
                         style={{ maxWidth: "250px" }}
                         onChange={handleSearchChange} // You can add your search handler here
                     />
+                    <button
+                        type="button"
+                        class="btn-close"
+                        aria-label="Close"
+                    ></button>
+                </div> */}
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="mb-0">All Users</h2>
+
+                    {/* Search bar with close button */}
+                    <div
+                        className="position-relative"
+                        style={{ maxWidth: "250px", width: "100%" }}
+                    >
+                        <input
+                            type="text"
+                            placeholder="Search user..."
+                            className="form-control pe-5" // Add right padding so X doesn't overlap text
+                            onChange={handleSearchChange}
+                        />
+                        <button
+                            type="button"
+                            className="btn-close position-absolute top-50 end-0 translate-middle-y me-2"
+                            aria-label="Clear"
+                            onClick={handleClearSearch} // Optional: clear search function
+                        ></button>
+                    </div>
                 </div>
+
                 <div className="table-responsive">
                     <table className="table table-bordered table-striped">
                         <thead className="thead-dark">
