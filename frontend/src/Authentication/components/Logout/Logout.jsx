@@ -11,12 +11,16 @@ const Logout = () => {
     const navigate = useNavigate();
 
     const logout = () => {
-      clearTokenLocalStoage();
+        clearTokenLocalStoage();
         dispatch(clearToken());
         navigate("/auth/login");
     };
 
-    return <button onClick={logout}>Logout</button>;
+    return (
+        <button className="btn btn-light border" onClick={logout}>
+            Logout
+        </button>
+    );
 };
 
 export default Logout;

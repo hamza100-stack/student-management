@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import "./Login.css"; // Optional for custom styles
 import axios from "axios";
-import { saveToken } from "../../../services/authService";
+import { loginUser, saveToken } from "../../../services/authService";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../../../features/auth/authSlice";
 
@@ -28,7 +28,7 @@ const Login = () => {
         // setCaptcha(generateCaptcha());
 
         if (isAuthenticated) {
-            navigate("/dashboard");
+            navigate("/dashboard/admin");
         }
     }, [isAuthenticated, navigate]);
 
@@ -56,26 +56,29 @@ const Login = () => {
         }
 
         try {
-            const res = await axios.post(
-                "http://localhost:5000/api/auth/login",
-                {
-                    username,
-                    password,
-                    token: captchaToken,
-                }
-            );
+            // const res = await axios.post(
+            //     "http://localhost:5000/api/auth/login",
+            //     {
+            //         username,
+            //         password,
+            //         token: captchaToken,
+            //     }
+            // );
 
-            // console.log(res);
-            if (res.data.message === "Login successful") {
+            const res = await loginUser({
+                username,
+                password,
+                token: captchaToken,
+            });
+
+            if (res.message === "Login successful") {
                 alert("✅ Login successful!");
-                saveToken(res.data.token);
-                dispatch(setToken(res.data.token)); // ✅ store in Redux
-            } else {
-                setError(res.data.message);
+                saveToken(res.token);
+                dispatch(setToken(res.token)); // ✅ store in Redux
             }
         } catch (err) {
             console.error(err);
-            setError("❌ Login failed. at -- frontend. Pls try again later");
+            setError("❌ Login failed. Pls try again later");
         } finally {
             // Optional: reset captcha after attempt
             setCaptchaVerified(false);
