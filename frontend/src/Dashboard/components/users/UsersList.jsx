@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from "react";
+import React, { Children, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
@@ -9,6 +9,7 @@ import EditUser from "./EditUser";
 import { toast } from "react-toastify";
 import axiosInterceptor from "../../../services/axiosInterceptor";
 import { deleteUser, fetchUserList } from "../../../services/userService";
+import Pagination from "../../../shared/pagination/Pagination";
 
 const UsersList = () => {
     const [showModal, setShowModal] = useState(false);
@@ -19,7 +20,20 @@ const UsersList = () => {
     const [selectUserToDelete, setSelectUserToDelete] = useState(null);
     const [filteredUsers, setFilteredUsers] = useState([]);
 
+    const searchRef = useRef();
+    const usersPerPage = 2;
+    const pageCount = Math.ceil(filteredUsers.length / usersPerPage);
+
+    const [currentPage, setCurrentPage] = useState(0);
+
     const dispatch = useDispatch();
+    const offset = currentPage * usersPerPage;
+    const currentUsers = filteredUsers.slice(offset, offset + usersPerPage);
+
+    const handlePageClick = ({ selected }) => {
+        console.log(selected, "check");
+        setCurrentPage(selected);
+    };
 
     // ✅ Global state for sidebar visibility
     const sidebarVisible = useSelector((state) => state.sidebar.sidebarVisible);
@@ -86,12 +100,18 @@ const UsersList = () => {
             }
         });
 
+        console.log(arrayOfFilteredData);
+
         setFilteredUsers(arrayOfFilteredData);
+        setCurrentPage(0); // ✅ Reset to first page after search
     };
 
-    const handleClearSearch = ()=>{
-        setFilteredUsers([])
-    }
+    const handleClearSearch = () => {
+        setFilteredUsers(users);
+        searchRef.current.value = "";
+        setCurrentPage(0);
+        // handlePageClick({ selected: 0 });
+    };
 
     return (
         <div className="container-fluid px-0">
@@ -182,9 +202,10 @@ const UsersList = () => {
                     >
                         <input
                             type="text"
-                            placeholder="Search user..."
+                            placeholder="Search name or email ..."
                             className="form-control pe-5" // Add right padding so X doesn't overlap text
                             onChange={handleSearchChange}
+                            ref={searchRef}
                         />
                         <button
                             type="button"
@@ -210,10 +231,10 @@ const UsersList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map((user, index) => (
+                            {currentUsers.length > 0 ? (
+                                currentUsers.map((user, index) => (
                                     <tr key={user._id}>
-                                        <td>{index + 1}</td>
+                                        <td>{offset + index + 1}</td>
                                         <td>{user._id}</td>
                                         <td>{user.name}</td>
                                         <td>{user.email}</td>
@@ -253,6 +274,11 @@ const UsersList = () => {
                     </table>
                 </div>
             </div>
+            <Pagination
+                pageCount={pageCount} // Total number of pages
+                onPageChange={handlePageClick} // Function to update current page
+                forcePage={currentPage}
+            />
         </div>
     );
 };
