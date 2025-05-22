@@ -11,6 +11,8 @@ import axiosInterceptor from "../../../services/axiosInterceptor";
 import { deleteUser, fetchUserList } from "../../../services/userService";
 import Pagination from "../../../shared/pagination/Pagination";
 
+import stylesUsesrList from "./UsersList.module.css";
+
 const UsersList = () => {
     const [showModal, setShowModal] = useState(false);
     const [showModalDelete, setShowModalDelete] = useState(false);
@@ -25,10 +27,41 @@ const UsersList = () => {
     const pageCount = Math.ceil(filteredUsers.length / usersPerPage);
 
     const [currentPage, setCurrentPage] = useState(0);
+    const [sortConfig, setSortConfig] = useState({
+        key: "name",
+        direction: "asc",
+    });
 
     const dispatch = useDispatch();
     const offset = currentPage * usersPerPage;
-    const currentUsers = filteredUsers.slice(offset, offset + usersPerPage);
+    // const currentUsers = filteredUsers.slice(offset, offset + usersPerPage);
+
+    // Sorting logic
+    const sortedUsers = [...filteredUsers].sort((a, b) => {
+        if (sortConfig.key) {
+            const aValue = a[sortConfig.key]
+                ? a[sortConfig.key].toString().toLowerCase()
+                : "";
+            const bValue = b[sortConfig.key]
+                ? b[sortConfig.key].toString().toLowerCase()
+                : "";
+            if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+            return 0;
+        }
+        return 0;
+    });
+
+    const currentUsers = sortedUsers.slice(offset, offset + usersPerPage);
+
+    const handleSort = (key) => {
+        let direction = "asc";
+        if (sortConfig.key === key && sortConfig.direction === "asc") {
+            direction = "desc";
+        }
+        setSortConfig({ key, direction });
+        setCurrentPage(0); // Reset to first page on sort
+    };
 
     const handlePageClick = ({ selected }) => {
         console.log(selected, "check");
@@ -222,10 +255,59 @@ const UsersList = () => {
                             <tr>
                                 <th>S.No</th>
                                 <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Role</th>
+                                {/* <th>Name</th> */}
+                                <th
+                                    onClick={() => handleSort("name")}
+                                    style={{ cursor: "pointer" }}
+                                    className={stylesUsesrList.sortableHeader}
+                                >
+                                    Name{" "}
+                                    {sortConfig.key === "name"
+                                        ? sortConfig.direction === "asc"
+                                            ? "↑"
+                                            : "↓"
+                                        : "↕"}
+                                </th>
+                                {/* <th>Email</th> */}
+                                <th
+                                    onClick={() => handleSort("email")}
+                                    style={{ cursor: "pointer" }}
+                                    className={stylesUsesrList.sortableHeader}
+                                >
+                                    Email{" "}
+                                    {sortConfig.key === "email"
+                                        ? sortConfig.direction === "asc"
+                                            ? "↑"
+                                            : "↓"
+                                        : "↕"}
+                                </th>
+                                {/* <th>Phone</th> */}
+                                <th
+                                    onClick={() => handleSort("phone")}
+                                    style={{ cursor: "pointer" }}
+                                    className={stylesUsesrList.sortableHeader}
+                                >
+                                    Phone{" "}
+                                    {sortConfig.key === "phone"
+                                        ? sortConfig.direction === "asc"
+                                            ? "↑"
+                                            : "↓"
+                                        : "↕"}
+                                </th>
+
+                                {/* <th>Role</th> */}
+                                <th
+                                    onClick={() => handleSort("role")}
+                                    style={{ cursor: "pointer" }}
+                                    className={stylesUsesrList.sortableHeader}
+                                >
+                                    Role{" "}
+                                    {sortConfig.key === "role"
+                                        ? sortConfig.direction === "asc"
+                                            ? "↑"
+                                            : "↓"
+                                        : "↕"}
+                                </th>
 
                                 <th style={{ minWidth: "150px" }}>Actions</th>
                             </tr>
