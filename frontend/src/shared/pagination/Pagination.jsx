@@ -2,7 +2,7 @@ import React from "react";
 import ReactPaginate from "react-paginate";
 import "./Pagination.css"; // Add custom styling here
 
-const Pagination = ({ pageCount, onPageChange }) => {
+const Pagination = ({ pageCount, onPageChange, forcePage }) => {
   return (
     <ReactPaginate
       breakLabel="..."
@@ -22,6 +22,8 @@ const Pagination = ({ pageCount, onPageChange }) => {
       nextLinkClassName="page-link"
       breakClassName="page-item"
       breakLinkClassName="page-link"
+      forcePage={forcePage}
+
     />
   );
 };
